@@ -24,6 +24,15 @@
 <a href="https://joss.theoj.org/papers/f964b6e22c71515c310fbe3843ad4513"><img src="https://joss.theoj.org/papers/f964b6e22c71515c310fbe3843ad4513/status.svg"></a>
 <br><br>
 <a href="https://twitter.com/intent/tweet?text=ParaMonte%20-%20Plain%20Powerfull%20Parallel%20Monte%20Carlo%20Library:&url=https%3A%2F%2Fgithub.com%2Fcdslaborg%2Fparamonte" target="_blank"><img src="https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fcdslaborg%2Fparamonte" alt="Twitter" /></a> 
+<br><br>
+<a href="#paramonte-plain-powerful-parallel-monte-carlo-library">Overview</a> | 
+<a href="#installation">Installation</a> | 
+<a href="#dependencies">Dependencies</a> | 
+<a href="#parallelism">Parallelism</a> | 
+<a href="#example-usage-instructions">Examples</a> |
+<a href="#citing-paramonte">Acknowledgments</a> | 
+<a href="#license">License</a> | 
+<a href="#authors-and-contributors">Authors</a>  
 </div>
   
   
@@ -67,9 +76,17 @@ ParaMonte has been developed while bearing the following design goals in mind:
 Installation  
 ============  
 
-The ParaMonte library installation/build process is fully automated for all of the supported programming languages. 
-The pre-built ready-to-use libraries are also available on [the release page of the ParaMonte library on GitHub](https://github.com/cdslaborg/paramonte/releases). 
+The pre-built ready-to-use libraries are available on [the release page of the ParaMonte library on GitHub](https://github.com/cdslaborg/paramonte/releases). 
 Each prebuilt ParaMonte library automatically ships with a full-fledged set of example codes and build scripts.  
+
+Alternatively, you can build the library from the source in the [GitHub repository of the project](https://github.com/cdslaborg/paramonte). 
+The ParaMonte library installation/build process is fully automated for all of the supported programming languages. 
+Currently, the following compiler suites are supported for builds from source:  
+  
+| Compiler Suite                    | Linux | macOS | Windows (64bit) |  
+|----------------------------------:|:-----:|:-----:|:---------------:|  
+| GNU Compiler Collection > 7.1     |&check;|&check;| &cross;         |  
+| Intel Parallel Studio > 18.0.0    |&check;|&check;| &check;         |  
 
 For more information and quick-start in the programming language of your choice, visit the [ParaMonte library homepage](https://www.cdslab.org/paramonte).  
 
@@ -95,6 +112,19 @@ If the automatic installation is unsuccessful, you can also install the librarie
 +   On **macOS**, we recommend [Open-MPI](https://www.open-mpi.org/) since the Intel MPI library does not support macOS. 
 
 For more information, visit [https://www.cdslab.org/paramonte/](https://www.cdslab.org/paramonte/).  
+
+  
+Example usage instructions  
+==========================  
+
++   For complete organized up-to-date instructions, visit: [cdslab.org/pm](https://www.cdslab.org/paramonte)  
+
++   For a quick look into *language-specific* README.md instructions, visit:  
+    +   **C**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/C](https://github.com/cdslaborg/paramonte/tree/master/src/interface/C)  
+    +   **C++**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/C++](https://github.com/cdslaborg/paramonte/tree/master/src/interface/C++)  
+    +   **Fortran**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/Fortran](https://github.com/cdslaborg/paramonte/tree/master/src/interface/Fortran)  
+    +   **MATLAB**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/MATLAB](https://github.com/cdslaborg/paramonte/tree/master/src/interface/MATLAB)  
+    +   **Python**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/Python](https://github.com/cdslaborg/paramonte/tree/master/src/interface/Python)  
 
   
 Citing ParaMonte  
@@ -154,19 +184,6 @@ Authors and contributors
     +   physicist / Computational Data Scientist by training,  
     +   currently a UTA Physics member,  
     +   contact: [joshuaalexanderosborne@gmail.com](mailto:"joshuaalexanderosborne@gmail.com")  
-
-  
-Example usage instructions  
-==========================  
-
-+   For complete organized up-to-date instructions, visit: [cdslab.org/pm](https://www.cdslab.org/paramonte)  
-
-+   For a quick look into *language-specific* README.md instructions, visit:  
-    +   **C**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/C](https://github.com/cdslaborg/paramonte/tree/master/src/interface/C)  
-    +   **C++**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/C++](https://github.com/cdslaborg/paramonte/tree/master/src/interface/C++)  
-    +   **Fortran**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/Fortran](https://github.com/cdslaborg/paramonte/tree/master/src/interface/Fortran)  
-    +   **MATLAB**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/MATLAB](https://github.com/cdslaborg/paramonte/tree/master/src/interface/MATLAB)  
-    +   **Python**: [https://github.com/cdslaborg/paramonte/tree/master/src/interface/Python](https://github.com/cdslaborg/paramonte/tree/master/src/interface/Python)  
 
 
 **For more information**, visit [cdslab.org/pm](https://www.cdslab.org/paramonte) or contact Amir Shahmoradi: [shahmoradi@utexas.edu](mailto:"shahmoradi@utexas.edu")  

@@ -24,6 +24,15 @@
 <a href="https://joss.theoj.org/papers/f964b6e22c71515c310fbe3843ad4513"><img src="https://joss.theoj.org/papers/f964b6e22c71515c310fbe3843ad4513/status.svg"></a>
 <br><br>
 <a href="https://twitter.com/intent/tweet?text=ParaMonte%20-%20Plain%20Powerfull%20Parallel%20Monte%20Carlo%20Library:&url=https%3A%2F%2Fgithub.com%2Fcdslaborg%2Fparamonte" target="_blank"><img src="https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fcdslaborg%2Fparamonte" alt="Twitter" /></a> 
+<br><br>
+<a href="#paramonte-plain-powerful-parallel-monte-carlo-library">Overview</a> | 
+<a href="#installation">Installation</a> | 
+<a href="#dependencies">Dependencies</a> | 
+<a href="#parallelism">Parallelism</a> | 
+<a href="#example-usage-instructions">Examples</a> |
+<a href="#citing-paramonte">Acknowledgments</a> | 
+<a href="#license">License</a> | 
+<a href="#authors-and-contributors">Authors</a>  
 </div>
   
   
@@ -67,9 +76,17 @@ ParaMonte has been developed while bearing the following design goals in mind:
 Installation  
 ============  
 
-The ParaMonte library installation/build process is fully automated for all of the supported programming languages. 
-The pre-built ready-to-use libraries are also available on [the release page of the ParaMonte library on GitHub](https://github.com/cdslaborg/paramonte/releases). 
+The pre-built ready-to-use libraries are available on [the release page of the ParaMonte library on GitHub](https://github.com/cdslaborg/paramonte/releases). 
 Each prebuilt ParaMonte library automatically ships with a full-fledged set of example codes and build scripts.  
+
+Alternatively, you can build the library from the source in the [GitHub repository of the project](https://github.com/cdslaborg/paramonte). 
+The ParaMonte library installation/build process is fully automated for all of the supported programming languages. 
+Currently, the following compiler suites are supported for builds from source:  
+  
+| Compiler Suite                    | Linux | macOS | Windows (64bit) |  
+|----------------------------------:|:-----:|:-----:|:---------------:|  
+| GNU Compiler Collection > 7.1     |&check;|&check;| &cross;         |  
+| Intel Parallel Studio > 18.0.0    |&check;|&check;| &check;         |  
 
 For more information and quick-start in the programming language of your choice, visit the [ParaMonte library homepage](https://www.cdslab.org/paramonte).  
 
@@ -95,49 +112,6 @@ If the automatic installation is unsuccessful, you can also install the librarie
 +   On **macOS**, we recommend [Open-MPI](https://www.open-mpi.org/) since the Intel MPI library does not support macOS. 
 
 For more information, visit [https://www.cdslab.org/paramonte/](https://www.cdslab.org/paramonte/).  
-
-  
-Citing ParaMonte  
-================  
-
-The ParaMonte library is an honor-ware and its currency is acknowledgment and citations.  
-  
-As per the ParaMonte library license agreement terms, if you use any parts of this library for any purposes, 
-kindly acknowledge the use of the ParaMonte library in your work (education/research/industry/development/...) 
-by citing the ParaMonte library's main publications as listed in [ACKNOWLEDGMENT.md](https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md).  
-
-Visit [the ParaMonte library homepage](https://www.cdslab.org/paramonte/notes/overview/preface/#how-to-acknowledge-the-use-of-the-paramonte-library-in-your-work) 
-to access the PDF version of these files free of charge.  
-
-  
-License  
-=======  
-
-[MIT License](https://github.com/cdslaborg/paramonte/blob/master/LICENSE.md)  
-
-**What does this license mean?**  
-
-Essentially, all we are asking from the users or developers is to  
-
->   explicitly acknowledge the use of this library or any concepts or parts of it in their education, research, or software (free or commercial).  
-
-This is a free software, so help us keep it freely available to the public by redistributing the library and contributing to it. 
-If you have questions or concerns about the license, do not hesitate to contact us (shahmoradi@utexas.edu).  
-
-  
-Authors and contributors  
-========================  
-
-+   [Amir Shahmoradi](https://www.cdslab.org/people/#amir-shahmoradi)  
-    +   astrophysicist/bioinformatician by training (and a science-lover in general),  
-    +   Ph.D. in computational physics/bioinformatics from the University of Texas at Austin,  
-    +   currently a faculty member of Physics and Data Science at The University of Texas at Arlington,  
-    +   with teaching/research experience/background in computational and data sciences, statistics, 
-        data analysis, and modeling, stochastic processes, Monte Carlo Methods, Bayesian probability theory, 
-        high energy physics, astronomy and astrophysics, computational physics, Molecular Dynamics simulations, 
-        biomedical science and MRI data analysis, bioinformatics and evolutionary biology (viral evolution, 
-        protein dynamics, and interactions),  
-    +   contact: [shahmoradi@utexas.edu](mailto:"shahmoradi@utexas.edu")  
 
   
 Example usage instructions  
@@ -257,6 +231,49 @@ Example usage instructions
     ./run.sh -n NUM_PROCESSOR
     ```  
     where you will have to replace `NUM_PROCESSOR` with your desired number of processes.  
+
+  
+Citing ParaMonte  
+================  
+
+The ParaMonte library is an honor-ware and its currency is acknowledgment and citations.  
+  
+As per the ParaMonte library license agreement terms, if you use any parts of this library for any purposes, 
+kindly acknowledge the use of the ParaMonte library in your work (education/research/industry/development/...) 
+by citing the ParaMonte library's main publications as listed in [ACKNOWLEDGMENT.md](https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md).  
+
+Visit [the ParaMonte library homepage](https://www.cdslab.org/paramonte/notes/overview/preface/#how-to-acknowledge-the-use-of-the-paramonte-library-in-your-work) 
+to access the PDF version of these files free of charge.  
+
+  
+License  
+=======  
+
+[MIT License](https://github.com/cdslaborg/paramonte/blob/master/LICENSE.md)  
+
+**What does this license mean?**  
+
+Essentially, all we are asking from the users or developers is to  
+
+>   explicitly acknowledge the use of this library or any concepts or parts of it in their education, research, or software (free or commercial).  
+
+This is a free software, so help us keep it freely available to the public by redistributing the library and contributing to it. 
+If you have questions or concerns about the license, do not hesitate to contact us (shahmoradi@utexas.edu).  
+
+  
+Authors and contributors  
+========================  
+
++   [Amir Shahmoradi](https://www.cdslab.org/people/#amir-shahmoradi)  
+    +   astrophysicist/bioinformatician by training (and a science-lover in general),  
+    +   Ph.D. in computational physics/bioinformatics from the University of Texas at Austin,  
+    +   currently a faculty member of Physics and Data Science at The University of Texas at Arlington,  
+    +   with teaching/research experience/background in computational and data sciences, statistics, 
+        data analysis, and modeling, stochastic processes, Monte Carlo Methods, Bayesian probability theory, 
+        high energy physics, astronomy and astrophysics, computational physics, Molecular Dynamics simulations, 
+        biomedical science and MRI data analysis, bioinformatics and evolutionary biology (viral evolution, 
+        protein dynamics, and interactions),  
+    +   contact: [shahmoradi@utexas.edu](mailto:"shahmoradi@utexas.edu")  
 
 
 **For more information**, visit [cdslab.org/pm](https://www.cdslab.org/paramonte) or contact Amir Shahmoradi: [shahmoradi@utexas.edu](mailto:"shahmoradi@utexas.edu")  

@@ -87,6 +87,10 @@ NOTE:
 NOTE: Upon finishing the build, the script will generate another Bash script named run.sh in 
 NOTE: the same directory, which can be used to run the executable. Usage:
 NOTE: 
+NOTE:     ./run.sh
+NOTE: 
+NOTE: or, 
+NOTE: 
 NOTE:     source ./run.sh
 
 EndOfMessage
@@ -114,6 +118,39 @@ while [ "$1" != "" ]; do
 done
 
 ####################################################################################################################################
+# get the platform name. required to define __WIN64__ for binding GFortran applications to Intel-prebuilt ParaMonte libraries on Windows.
+####################################################################################################################################
+
+UNAME_PLATFORM="$(uname -s)"
+case "${UNAME_PLATFORM}" in
+    Linux*)     PLATFORM=linux;;
+    Darwin*)    PLATFORM=darwin;;
+    CYGWIN*)    PLATFORM=cygwin;;
+    MINGW*)     PLATFORM=mingw;;
+    *)          PLATFORM="unknown:${UNAME_PLATFORM}"
+esac
+if [[ "$PLATFORM" =~ .*"unknown".* ]]; then
+    echo >&2
+    echo >&2 "-- ${BUILD_NAME} - FATAL: build failed. unrecognized platform - ${PLATFORM}"
+    echo >&2 "-- ${BUILD_NAME} - supported platforms include: Linux, Darwin, CYGWIN, MINGW"
+    echo >&2 "-- ${BUILD_NAME} - ParaMonte build has been only tested on Linux and Darwin platforms."
+    echo >&2
+    echo >&2 "-- ${BUILD_NAME} - gracefully exiting."
+    echo >&2
+    exit 1
+else
+    export PLATFORM
+fi
+
+if [[ "${UNAME_PLATFORM}" =~ .*"Darwin".* ]]; then
+    isMacOS=true
+    OSNAME="macOS"
+else
+    isMacOS=false
+    OSNAME="Linux"
+fi
+
+####################################################################################################################################
 # build ParaMonteExample objects and executable
 ####################################################################################################################################
 
@@ -125,7 +162,9 @@ if [ -z ${FOR_COARRAY_NUM_IMAGES+x} ]; then
 fi
 export FOR_COARRAY_NUM_IMAGES
 
-PMLIB_FULL_PATH="$(ls -d ${FILE_DIR}/*libparamonte_* | sort -V | tail -n1)"
+PMLIB_EXTENSION=""
+if [ "$PLATFORM" = "mingw" ] || [ "$PLATFORM" = "cygwin" ]; then PMLIB_EXTENSION=".dll"; fi
+PMLIB_FULL_PATH="$(ls -d ${FILE_DIR}/*libparamonte_*${PMLIB_EXTENSION} | sort -V | tail -n1)"
 PMLIB_FULL_NAME=${PMLIB_FULL_PATH##*/}
 PMLIB_BASE_NAME=${PMLIB_FULL_NAME%.*}
 
@@ -133,15 +172,15 @@ PMLIB_BASE_NAME=${PMLIB_FULL_NAME%.*}
 # get ParaMonte's compiler suite
 ####################################################################################################################################
 
-unset FILE_EXT
+unset SRC_EXT
 unset SRC_FILES
 unset COMPILER_LIST
 unset EXAMPLE_LANGUAGE
 unset PM_COMPILER_SUITE
 
 if [[ "$PMLIB_FULL_NAME" =~ .*"_fortran_".* ]]; then
-    FILE_EXT=f90
-    SRC_FILES="paramonte.${FILE_EXT}"; export SRC_FILES
+    SRC_EXT=f90
+    SRC_FILES="paramonte.${SRC_EXT}"; export SRC_FILES
     EXAMPLE_LANGUAGE=Fortran
     if [[ "$PMLIB_FULL_NAME" =~ .*"_intel_".* ]]; then
         PM_COMPILER_SUITE=intel
@@ -153,10 +192,11 @@ if [[ "$PMLIB_FULL_NAME" =~ .*"_fortran_".* ]]; then
         #COMPILER_LIST="gfortran ifort"
         declare -a COMPILER_LIST=("gfortran" "ifort")
     fi
+    if [ "$PLATFORM" = "mingw" ] || [ "$PLATFORM" = "cygwin" ]; then declare -a COMPILER_LIST=("gfortran"); fi
 fi
 
 if [[ "$PMLIB_FULL_NAME" =~ .*"_c_".* ]]; then
-    FILE_EXT=c
+    SRC_EXT=c
     EXAMPLE_LANGUAGE=C
     if [[ "$PMLIB_FULL_NAME" =~ .*"_intel_".* ]]; then
         PM_COMPILER_SUITE=intel
@@ -168,10 +208,11 @@ if [[ "$PMLIB_FULL_NAME" =~ .*"_c_".* ]]; then
         #COMPILER_LIST="gcc icc"
         declare -a COMPILER_LIST=("gcc" "icc")
     fi
+    if [ "$PLATFORM" = "mingw" ] || [ "$PLATFORM" = "cygwin" ]; then declare -a COMPILER_LIST=("gcc"); fi
 fi
 
 if [[ "$PMLIB_FULL_NAME" =~ .*"_cpp_".* ]]; then
-    FILE_EXT=cpp
+    SRC_EXT=cpp
     EXAMPLE_LANGUAGE=C++
     if [[ "$PMLIB_FULL_NAME" =~ .*"_intel_".* ]]; then
         PM_COMPILER_SUITE=intel
@@ -183,9 +224,10 @@ if [[ "$PMLIB_FULL_NAME" =~ .*"_cpp_".* ]]; then
         #COMPILER_LIST="g++ icpc"
         declare -a COMPILER_LIST=("g++" "icpc")
     fi
+    if [ "$PLATFORM" = "mingw" ] || [ "$PLATFORM" = "cygwin" ]; then declare -a COMPILER_LIST=("g++"); fi
 fi
 
-SRC_FILES="${SRC_FILES} logfunc.${FILE_EXT} main.${FILE_EXT}"
+SRC_FILES="${SRC_FILES} logfunc.${SRC_EXT} main.${SRC_EXT}"
 
 echo >&2
 echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - ParaMonte library's full path: ${PMLIB_FULL_PATH}"
@@ -288,14 +330,24 @@ if [[ "$PMLIB_FULL_NAME" =~ .*"cafdistributed".* ]]; then
 fi
 echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - CAFTYPE: ${CAFTYPE}"
 
-if [[ "$PMLIB_FULL_NAME" =~ .*"_gnu_".* && "${CAF_ENABLED}" = "true" ]]; then
-    #COMPILER_LIST=caf
-    declare -a COMPILER_LIST=("caf")
-fi
+if [ "${CAF_ENABLED}" = "true" ]; then
 
-if [[ "$PMLIB_FULL_NAME" =~ .*"_intel_".* && "${CAF_ENABLED}" = "true" ]]; then
-    #COMPILER_LIST=ifort
-    declare -a COMPILER_LIST=("ifort")
+    if [[ "$PMLIB_FULL_NAME" =~ .*"_gnu_".* ]]; then
+        declare -a COMPILER_LIST=("caf")
+    fi
+
+    if [[ "$PMLIB_FULL_NAME" =~ .*"_intel_".* ]]; then
+        declare -a COMPILER_LIST=("ifort")
+    fi
+
+    if [ "$PLATFORM" = "mingw" ] || [ "$PLATFORM" = "cygwin" ]; then
+        echo >&2
+        echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - WARNING: Building Coarray Fortran applications via GNU Compilers is unsupported."
+        echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - WARNING: This application build will likely fail."
+        echo >&2
+        #exit 1
+    fi
+
 fi
 
 ####################################################################################################################################
@@ -314,6 +366,7 @@ else
 fi
 
 if [ -z ${USER_SELECTED_COMPILER+x} ] && [ -z ${USER_SELECTED_COMPILER_FLAGS+x} ]; then
+
     if [ "${PM_COMPILER_SUITE}" = "intel" ]; then
         if [ "${EXAMPLE_LANGUAGE}" = "C" ] || [ "${EXAMPLE_LANGUAGE}" = "C++" ]; then
             #COMPILER_FLAGS_LIST=${INTEL_C_COMPILER_FLAGS}
@@ -324,6 +377,7 @@ if [ -z ${USER_SELECTED_COMPILER+x} ] && [ -z ${USER_SELECTED_COMPILER_FLAGS+x} 
             declare -a COMPILER_FLAGS_LIST=("${INTEL_Fortran_COMPILER_FLAGS} -fpp" "${GNU_Fortran_COMPILER_FLAGS} -cpp")
         fi
     fi
+
     if [ "${PM_COMPILER_SUITE}" = "gnu" ]; then
         if [ "${EXAMPLE_LANGUAGE}" = "C" ] || [ "${EXAMPLE_LANGUAGE}" = "C++" ]; then
             #COMPILER_FLAGS_LIST=${GNU_C_COMPILER_FLAGS}
@@ -334,11 +388,23 @@ if [ -z ${USER_SELECTED_COMPILER+x} ] && [ -z ${USER_SELECTED_COMPILER_FLAGS+x} 
             declare -a COMPILER_FLAGS_LIST=("${GNU_Fortran_COMPILER_FLAGS} -cpp" "${INTEL_Fortran_COMPILER_FLAGS} -fpp")
         fi # -DIS_COMPATIBLE_COMPILER
     fi
+
+    if [ "$PLATFORM" = "mingw" ] || [ "$PLATFORM" = "cygwin" ]; then
+        if [ "${EXAMPLE_LANGUAGE}" = "Fortran" ]; then
+            declare -a COMPILER_FLAGS_LIST=("${GNU_Fortran_COMPILER_FLAGS} -cpp -D__WIN64__")
+        fi
+        if [ "${EXAMPLE_LANGUAGE}" = "C" ] || [ "${EXAMPLE_LANGUAGE}" = "C++" ]; then
+            declare -a COMPILER_FLAGS_LIST=("${GNU_C_COMPILER_FLAGS} -cpp")
+        fi
+    fi
+
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - inferred compiler/linker flags(s): ${COMPILER_FLAGS_LIST}"
+
 else
-    #COMPILER_FLAGS_LIST="${USER_SELECTED_COMPILER_FLAGS}"
+
     declare -a COMPILER_FLAGS_LIST=("${USER_SELECTED_COMPILER_FLAGS}")
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - user-selected compiler/linker flags: ${USER_SELECTED_COMPILER_FLAGS}"
+
 fi
 
 ####################################################################################################################################
@@ -359,7 +425,7 @@ do
 
     echo >&2
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - compiling ParaMonte example with ${COMPILER}"
-    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - ${COMPILER} ${COMPILER_FLAGS} ${SRC_FILES} ${PMLIB_FULL_PATH} -o ${PM_EXAM_EXE_NAME}"
+    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - ${COMPILER} ${COMPILER_FLAGS} ${SRC_FILES} -c"
 
     ${COMPILER} ${COMPILER_FLAGS} ${SRC_FILES} -c
 
@@ -383,9 +449,9 @@ do
 
     echo >&2
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - linking ParaMonte example with ${LINKER}"
-    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - ${LINKER} ${COMPILER_FLAGS} ${LINKER_FLAGS} logfunc.o main.o ${PMLIB_FULL_PATH} -o ${PM_EXAM_EXE_NAME}"
+    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - ${LINKER} ${COMPILER_FLAGS} ${LINKER_FLAGS} ${SRC_FILES//.$SRC_EXT/.o} ${PMLIB_FULL_NAME} -o ${PM_EXAM_EXE_NAME}"
 
-    ${LINKER} ${COMPILER_FLAGS} ${LINKER_FLAGS} logfunc.o main.o ${PMLIB_FULL_NAME} -o ${PM_EXAM_EXE_NAME}
+    ${LINKER} ${COMPILER_FLAGS} ${LINKER_FLAGS} ${SRC_FILES//.$SRC_EXT/.o} "${PMLIB_FULL_NAME}" -o ${PM_EXAM_EXE_NAME}
 
     if [ $? -eq 0 ]; then
 
@@ -394,12 +460,17 @@ do
         echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - example build appears to have succeeded."
 
         {
+        echo "#!/bin/bash"
         echo "# ParaMonte example runtime setup script."
         echo "# "
         } > ${RUN_FILE_NAME}
         if [ "${MPI_ENABLED}" = "true" ] || [ "${CAF_ENABLED}" = "true" ]; then
             {
             echo "# usage:"
+            echo "# "
+            echo "#     ./${RUN_FILE_NAME} -n number_of_processors"
+            echo "# "
+            echo "# or,"
             echo "# "
             echo "#     source ./${RUN_FILE_NAME} -n number_of_processors"
             echo "# "
@@ -421,6 +492,11 @@ do
         else
             {
             echo "# usage:"
+            echo "# "
+            echo "#     ./${RUN_FILE_NAME}"
+            echo "# "
+            echo "# or,"
+            echo "# "
             echo "#     source ./${RUN_FILE_NAME}"
             echo ""
             } >> ${RUN_FILE_NAME}
@@ -494,6 +570,10 @@ echo >&2
 if [ "${BUILD_SUCCEEDED}" = "true" ]; then
 
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - To run the example's executable with the proper environmental setup, try:"
+    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - "
+    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} -     ./${RUN_FILE_NAME}"
+    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - "
+    echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - or,"
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - "
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} -     source ./${RUN_FILE_NAME}"
     echo >&2 "-- ParaMonteExample${EXAMPLE_LANGUAGE} - "

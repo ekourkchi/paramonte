@@ -45,9 +45,12 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
     then, the ParaMonte sampler will overwrite the existing simulation files.  
 
 **Compiler support**  
-
-+   Intel Parallel Studio (>2018.0.0)  
-+   GNU Compiler Collection (>7.0.0)  
+  
+| Compiler Suite                    | Windows (64bit) | Linux | macOS |  
+|----------------------------------:|:---------------:|:-----:|:-----:|  
+| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
+| Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 
 **Compiler / MPI library used for this binary release**  
 
@@ -90,8 +93,11 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
 
 **Compiler support**  
 
-+   Intel Parallel Studio (>2018.0.0)  
-+   GNU Compiler Collection (>7.0.0)  
+| Compiler Suite                    | Windows (64bit) | Linux | macOS |  
+|----------------------------------:|:---------------:|:-----:|:-----:|  
+| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
+| Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 
 **Compiler / MPI library used for this binary release**  
 
@@ -120,8 +126,11 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
 
 **Compiler support**  
 
-+   Intel Parallel Studio (>2018.0.0)  
-+   GNU Compiler Collection (>7.0.0)  
+| Compiler Suite                    | Windows (64bit) | Linux | macOS |  
+|----------------------------------:|:---------------:|:-----:|:-----:|  
+| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
+| Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 
 **Compiler / MPI library used for this binary release**  
 
@@ -143,8 +152,11 @@ This is the first public release of the ParaMonte library.
 
 **Compiler support**  
 
-+   Intel Parallel Studio (>2018.0.0)  
-+   GNU Compiler Collection (>7.0.0)  
+| Compiler Suite                    | Windows (64bit) | Linux | macOS |  
+|----------------------------------:|:---------------:|:-----:|:-----:|  
+| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
+| Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 
 **Compiler / MPI library used for this binary release**  
 
