@@ -5,15 +5,61 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
 
 ## **Version 1.x.x**  
 
-### **Version 1.5.0** -- Work in progress
+### **Version 1.4.2** -- November 27, 2020
+
+**Enhancements**  
+
++   Minor enhancements to the ParaMonte C/C++/Fortran example build scripts `build.sh` and `build.bat`.  
++   The default build settings are now limited to `heap` memory allocation with `dynamic` library builds
+    for only serial and MPI parallelization for all languages. The `stack` memory allocation results in 
+    a ~10% gain in the efficiency of the code. The benefits of stack-memory builds are marginal and are 
+    often problematic, in particular, for usage with non-compiled languages. However, users can still 
+    build the library with `stack` memory allocation by specifying the appropriate build flags with
+    the `install.sh` on Unix or `install.bat` script on Windows systems. For further information, 
+    see the installation guidelines on the ParaMonte documentation website.
++   The temporary array creations in debug mode are now resolved.
+
+**Compiler support**  
+  
+| Compiler Suite                    | Windows (64bit) | Linux | macOS |  
+|----------------------------------:|:---------------:|:-----:|:-----:|  
+| GNU Compiler Collection > 8.4     | ✅              | ✅    | ✅    |  
+| Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
+| Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
+
+**Compiler / MPI library used for this binary release**  
+
++   **Windows**: Intel Parallel Studio Version 19.0.4.245 Build 20190417 / Intel(R) MPI Library 2019 Update 4 for Windows  
++   **Linux**: Intel Parallel Studio Version 18.0.2 20180210 / Intel(R) MPI Library for Linux OS, Version 2018 Update 2 Build 20180125  
++   **Linux**: GNU 10.1.0 / MPICH 3.2  
++   **macOS**: Intel Parallel Studio Version 19.1.0.216 20200306  
++   **macOS**: GNU 10.2.0 / Open-MPI 4.0.5  
+
+### **Version 1.4.1** -- November 15, 2020
 
 **Enhancements**  
 
 +   The ParaMonte C/C++/Fortran example build scripts `build.sh` and `build.bat` 
-    now check for the existence of both of Intel and GNU compilers in the appropriate 
+    now check for the existence of both Intel and GNU compilers in the appropriate 
     order that is automatically inferred at the compilation time. Also, the dependencies 
     on the MPI compiler wrappers is now removed as the MPI libraries are not required to 
     build the ParaMonte examples, even in cases of parallel ParaMonte example builds.
+
+**Compiler support**  
+  
+| Compiler Suite                    | Windows (64bit) | Linux | macOS |  
+|----------------------------------:|:---------------:|:-----:|:-----:|  
+| GNU Compiler Collection > 7.5     | ✅              | ✅    | ✅    |  
+| Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
+| Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
+
+**Compiler / MPI library used for this binary release**  
+
++   **Windows**: Intel Parallel Studio Version 19.0.4.245 Build 20190417 / Intel(R) MPI Library 2019 Update 4 for Windows  
++   **Linux**: Intel Parallel Studio Version 18.0.2 20180210 / Intel(R) MPI Library for Linux OS, Version 2018 Update 2 Build 20180125  
++   **Linux**: GNU 10.1.0 / MPICH 3.2  
++   **macOS**: Intel Parallel Studio Version 19.1.0.216 20200306  
++   **macOS**: GNU 10.2.0 / Open-MPI 4.0.5  
 
 ### **Version 1.4.0** -- October 29, 2020
 
@@ -33,6 +79,22 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
     the requested refinement method, `SampleRefinementMethod = "batchmeans max"` 
     or `SampleRefinementMethod = "BatchMeans-max"` (case-insensitive).
 
+**Compiler support**  
+  
+| Compiler Suite                    | Windows (64bit) | Linux | macOS |  
+|----------------------------------:|:---------------:|:-----:|:-----:|  
+| GNU Compiler Collection > 7.5     | ✅              | ✅    | ✅    |  
+| Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
+| Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
+
+**Compiler / MPI library used for this binary release**  
+
++   **Windows**: Intel Parallel Studio Version 19.0.4.245 Build 20190417 / Intel(R) MPI Library 2019 Update 4 for Windows  
++   **Linux**: Intel Parallel Studio Version 18.0.2 20180210 / Intel(R) MPI Library for Linux OS, Version 2018 Update 2 Build 20180125  
++   **Linux**: GNU 9.1 / MPICH 3.2  
++   **macOS**: Intel Parallel Studio Version 19.1.0.216 20200306  
++   **macOS**: GNU 10.2.0 / Open-MPI 4.0.5  
+
 ### **Version 1.3.0** -- October 3, 2020
 
 **Enhancements**  
@@ -48,7 +110,7 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
   
 | Compiler Suite                    | Windows (64bit) | Linux | macOS |  
 |----------------------------------:|:---------------:|:-----:|:-----:|  
-| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| GNU Compiler Collection > 7.5     | ✅              | ✅    | ✅    |  
 | Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
 | Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 
@@ -95,7 +157,7 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
 
 | Compiler Suite                    | Windows (64bit) | Linux | macOS |  
 |----------------------------------:|:---------------:|:-----:|:-----:|  
-| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| GNU Compiler Collection > 7.5     | ✅              | ✅    | ✅    |  
 | Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
 | Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 
@@ -128,7 +190,7 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
 
 | Compiler Suite                    | Windows (64bit) | Linux | macOS |  
 |----------------------------------:|:---------------:|:-----:|:-----:|  
-| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| GNU Compiler Collection > 7.5     | ✅              | ✅    | ✅    |  
 | Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
 | Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 
@@ -154,7 +216,7 @@ This is the first public release of the ParaMonte library.
 
 | Compiler Suite                    | Windows (64bit) | Linux | macOS |  
 |----------------------------------:|:---------------:|:-----:|:-----:|  
-| GNU Compiler Collection > 7.0     | ✅              | ✅    | ✅    |  
+| GNU Compiler Collection > 7.5     | ✅              | ✅    | ✅    |  
 | Intel Parallel Studio > 18.0.0    | ✅              | ✅    | ✅    |  
 | Microsoft C/C++ Compiler > 16.0.0 | ✅              | ❌    | ❌    |  
 

@@ -7,6 +7,7 @@
 <a href="https://github.com/cdslaborg/paramonte/releases" target="_blank"><img src="https://img.shields.io/github/v/release/cdslaborg/paramonte?color=orange&label=kernel%20release&style=flat-square" alt="GitHub release (latest by date)" /></a> 
 <a href="https://github.com/cdslaborg/paramonte/releases" target="_blank"><img src="https://img.shields.io/github/release-date/cdslaborg/paramonte?color=orange&style=flat-square" alt="GitHub Release Date" /></a> 
 <a href="https://pypi.org/project/paramonte/" target="_blank"><img src="https://img.shields.io/pypi/v/paramonte?color=orange&label=pypi%20release&style=flat-square" alt="PyPI - release version" /></a> 
+<a href="https://travis-ci.org/cdslaborg/paramonte" target="_blank"><img src="https://travis-ci.org/cdslaborg/paramonte.svg?branch=master&style=flat-square" alt="Build Status" /></a> 
 <a href="https://github.com/cdslaborg/paramonte/releases" target="_blank"><img src="https://img.shields.io/pypi/status/paramonte?style=flat-square" alt="PyPI - Status" /></a>
 <a href="https://lgtm.com/projects/g/cdslaborg/paramonte/?mode=list" target="_blank"><img src="https://img.shields.io/lgtm/grade/python/github/cdslaborg/paramonte?label=code%20quality&style=flat-square&color=brightgreen" alt="LGTM Grade" /></a>
 <a href="https://github.com/cdslaborg/paramonte/issues" target="_blank"><img src="https://img.shields.io/github/issues/cdslaborg/paramonte?style=flat-square" alt="GitHub issues" /></a>
@@ -85,7 +86,7 @@ Currently, the following compiler suites are supported for builds from source:
   
 | Compiler Suite                    | Linux | macOS | Windows (64bit) |  
 |----------------------------------:|:-----:|:-----:|:---------------:|  
-| GNU Compiler Collection > 7.1     |&check;|&check;| &cross;         |  
+| GNU Compiler Collection > 8.4     |&check;|&check;| &cross;         |  
 | Intel Parallel Studio > 18.0.0    |&check;|&check;| &check;         |  
 
 For more information and quick-start in the programming language of your choice, visit the [ParaMonte library homepage](https://www.cdslab.org/paramonte).  
@@ -136,7 +137,7 @@ Example usage instructions
     +   On **macOS/Linux**: Open a Bash terminal and navigate to the folder containing the compressed library. 
         Use the following command to untar the compressed file,  
         ```  
-        ls libparamonte*.tar.gz | xargs -i tar xvzf {}
+        ls libparamonte*.tar.gz* | xargs -i tar xvzf {}
         ```  
         to extract all libparamonte tar files in the current directory.  
 

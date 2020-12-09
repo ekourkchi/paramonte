@@ -62,7 +62,7 @@ ParaMonte_ROOT_DIR=${FILE_DIR}
 export ParaMonte_ROOT_DIR
 #export ParaMonte_ROOT_DIR="${ParaMonte_ROOT_DIR:-${PWD%/}}"
 
-if [[ ! -f "${ParaMonte_ROOT_DIR}/src/ParaMonte/ParaMonte_mod.f90" ]]; then
+if [[ ! -f "${ParaMonte_ROOT_DIR}/src/kernel/ParaMonte_mod.f90" ]]; then
   echo >&2
   echo >&2 "-- ParaMonte - FATAL: build failed."
   echo >&2 "-- ParaMonte - FATAL: Please run this script inside the top-level ParaMonte library root directory."
@@ -90,10 +90,13 @@ unset MPIEXEC_PATH
 
 PMCS_LIST="none"
 fresh_flag=""
+local_flag=""
 yes_to_all_flag=""
 gcc_bootstrap_flag=""
 FOR_COARRAY_NUM_IMAGES=3
 MatDRAM_ENABLED="false"
+shared_enabled="true"
+codecov_flag=""
 dryrun_flag=""
 
 while [ "$1" != "" ]; do
@@ -122,6 +125,9 @@ while [ "$1" != "" ]; do
         -x | --exam_enabled )   shift
                                 ParaMonteExample_RUN_ENABLED="$1"
                                 ;;
+        -S | --shared_enabled ) shift
+                                shared_enabled="$1"
+                                ;;
         -f | --fortran )        shift
                                 Fortran_COMPILER_PATH="$1"
                                 ;;
@@ -129,6 +135,8 @@ while [ "$1" != "" ]; do
                                 MPIEXEC_PATH="$1"
                                 ;;
         -F | --fresh )          fresh_flag="--fresh"
+                                ;;
+        -O | --local )          local_flag="--local"
                                 ;;
         -d | --dryrun )         dryrun_flag="--dryrun"
                                 ;;
@@ -138,10 +146,14 @@ while [ "$1" != "" ]; do
                                 ;;
         -a | --matdram )        MatDRAM_ENABLED="true"
                                 ;;
+        -c | --codecov )        codecov_flag="--codecov"
+                                ;;
         -n | --nproc )          shift
                                 FOR_COARRAY_NUM_IMAGES="$1"
                                 ;;
         -h | --help )           usage
+                                echo >&2 ""
+                                echo >&2 ""
                                 exit
                                 ;;
         * )                     usage
@@ -155,6 +167,24 @@ while [ "$1" != "" ]; do
     esac
     shift
 done
+
+if ! [ "${codecov_flag}" = "" ]; then
+    if [ -z ${LANG_LIST+x} ]; then
+        LANG_LIST="fortran"
+    fi
+    if [ -z ${BTYPE_LIST+x} ]; then
+        BTYPE_LIST="debug"
+    fi
+    if [ -z ${LTYPE_LIST+x} ]; then
+        LTYPE_LIST="static"
+    fi
+    if [ -z ${MEMORY_LIST+x} ]; then
+        MEMORY_LIST="heap"
+    fi
+    if [ -z ${PARALLELISM_LIST+x} ]; then
+        PARALLELISM_LIST="none"
+    fi
+fi
 
 ####################################################################################################################################
 # determine whether to build MatDRAM or not. NOTE: If true, all other builds will be disabled. NOT IMPLEMENTED YET. NOT NEEDED.
@@ -235,7 +265,7 @@ reportConflict()
     echo >&2 "-- ParaMonte - WARNING: The requested build configuration will ignored."
     echo >&2 "-- ParaMonte - skipping..."
     echo >&2 ""
-    exit 1
+    #exit 1
 }
 
 reportBadValue()
@@ -257,7 +287,7 @@ reportBadValue()
 if ! [ -z ${LANG_LIST+x} ]; then
     for LANG in $LANG_LIST; do
         if  [[ $LANG != [cC]
-            && ($LANG != "c++" && $LANG != "C++")
+            && ($LANG != "c++" && $LANG != "C++" && $LANG != [cC][pP][pP])
             && $LANG != [fF][oO][rR][tT][rR][aA][nN]
             && $LANG != [mM][aA][tT][lL][aA][bB]
             && $LANG != [pP][yY][tT][hH][oO][nN] ]]; then
@@ -374,7 +404,7 @@ fi
 fortran_flag=""
 if ! [ -z ${Fortran_COMPILER_PATH+x} ]; then
     if [[ -f "${Fortran_COMPILER_PATH}" ]]; then
-        fortran_flag="--mpiexec ${Fortran_COMPILER_PATH}"
+        fortran_flag="--fortran ${Fortran_COMPILER_PATH}"
     else
         if [ "${Fortran_COMPILER_PATH}" = "" ]; then
             unset Fortran_COMPILER_PATH
@@ -431,12 +461,14 @@ if ! [ -z ${PARALLELISM_LIST+x} ]; then
     done
 fi
 
+# avoid static library build for non-Fortran languages
+
 if ! [ -z ${LANG_LIST+x} ]; then
     for LANG in $LANG_LIST; do
-        if  [ "${LANG}" = "matlab" ] || [ "${LANG}" = "python" ]; then
+        if ! [ "${LANG}" = "fortran" ]; then
             for LTYPE in $LTYPE_LIST; do
                 if  [ "${LTYPE}" = "static" ]; then
-                    reportConflict "ParaMonte static library build is not possible for usage from Python language."
+                    reportConflict "ParaMonte static library build is not possible for usage from non-Fortran languages."
                 fi
             done
         fi
@@ -471,16 +503,19 @@ if [ -z ${PMCS_LIST+x} ]; then
     PMCS_LIST="none"
 fi
 if [ -z ${BTYPE_LIST+x} ]; then
-    BTYPE_LIST="release testing debug"
+    #BTYPE_LIST="release testing debug"
+    BTYPE_LIST="release debug"
 fi
 if [ -z ${LTYPE_LIST+x} ]; then
-    LTYPE_LIST="static dynamic"
+    #LTYPE_LIST="static dynamic"
+    LTYPE_LIST="dynamic"
 fi
 if [ -z ${PARALLELISM_LIST+x} ]; then
     PARALLELISM_LIST="none mpi cafsingle cafshared cafdistributed"
 fi
 if [ -z ${MEMORY_LIST+x} ]; then
-    MEMORY_LIST="stack heap"
+    #MEMORY_LIST="stack heap"
+    MEMORY_LIST="heap"
 fi
 if [ -z ${ParaMonteTest_RUN_ENABLED+x} ]; then
     ParaMonteTest_RUN_ENABLED="true"
@@ -489,13 +524,7 @@ if [ -z ${ParaMonteExample_RUN_ENABLED+x} ]; then
     ParaMonteExample_RUN_ENABLED="true"
 fi
 
-if [ "${LANG_LIST}" = "matlab" ]; then
-    MEMORY_LIST="heap"
-    LTYPE_LIST="dynamic"
-    if [ -z ${PARALLELISM_LIST+x} ]; then PARALLELISM_LIST="none mpi"; fi
-fi
-
-if [ "${LANG_LIST}" = "python" ]; then
+if [ "${LANG_LIST}" = "matlab" ] || [ "${LANG_LIST}" = "python" ]; then
     MEMORY_LIST="heap"
     LTYPE_LIST="dynamic"
     if [ -z ${PARALLELISM_LIST+x} ]; then PARALLELISM_LIST="none mpi"; fi
@@ -516,7 +545,11 @@ for PMCS in $PMCS_LIST; do
 
                         BENABLED=true
 
-                        interface_language_flag="--lang ${INTERFACE_LANGUAGE}"
+                        if [ "${INTERFACE_LANGUAGE}" = "cpp" ]; then
+                            interface_language_flag="--lang c++"
+                        else
+                            interface_language_flag="--lang ${INTERFACE_LANGUAGE}"
+                        fi
                         if [ "${INTERFACE_LANGUAGE}" = "fortran" ]; then
                             CFI_ENABLED="false"
                         else
@@ -526,6 +559,7 @@ for PMCS in $PMCS_LIST; do
 
                         test_enabled_flag="--test_enabled ${ParaMonteTest_RUN_ENABLED}"
                         exam_enabled_flag="--exam_enabled ${ParaMonteExample_RUN_ENABLED}"
+                        shared_enabled_flag="--shared_enabled ${shared_enabled}"
 
                         if [ "${PMCS}" = "none" ]; then
                            compiler_suite_flag=""
@@ -549,11 +583,21 @@ for PMCS in $PMCS_LIST; do
 
                         # verify no conflict
 
+                        # avoid static library build for non-Fortran languages
+
+                        if [ "${CFI_ENABLED}" = "true" ] && [ "${LTYPE}" = "static" ]; then
+                            BENABLED=false
+                        fi
+
+                        # avoid caf library builds for non-Fortran languages
+
                         if [[ "${PARALLELISM}" =~ .*"caf".* ]]; then
                             if [ "${CFI_ENABLED}" = "true" ] || [ "${LTYPE}" = "dynamic" ]; then
                                 BENABLED=false
                             fi
                         fi
+
+                        # avoid stack memory allocations for dynamic library builds
 
                         if [ "${LTYPE}" = "dynamic" ]; then
                             if [ "${MEMORY}" = "stack" ]; then BENABLED=false; fi
@@ -581,14 +625,21 @@ for PMCS in $PMCS_LIST; do
                             echo >&2 "                          ${caftype_flag} \ "
                             echo >&2 "                          ${test_enabled_flag} \ "
                             echo >&2 "                          ${exam_enabled_flag} \ "
+                            echo >&2 "                          ${shared_enabled_flag} \ "
                             if ! [ "${yes_to_all_flag}" = "" ]; then
                             echo >&2 "                          ${yes_to_all_flag} \ "
                             fi
                             if ! [ "${fresh_flag}" = "" ]; then
                             echo >&2 "                          ${fresh_flag} \ "
                             fi
+                            if ! [ "${local_flag}" = "" ]; then
+                            echo >&2 "                          ${local_flag} \ "
+                            fi
                             if ! [ "${dryrun_flag}" = "" ]; then
                             echo >&2 "                          ${dryrun_flag} \ "
+                            fi
+                            if ! [ "${codecov_flag}" = "" ]; then
+                            echo >&2 "                          ${codecov_flag} \ "
                             fi
                             if ! [ "${gcc_bootstrap_flag}" = "" ]; then
                             echo >&2 "                          ${gcc_bootstrap_flag} \ "
@@ -620,9 +671,12 @@ for PMCS in $PMCS_LIST; do
                             ${caftype_flag} \
                             ${test_enabled_flag} \
                             ${exam_enabled_flag} \
+                            ${shared_enabled_flag} \
                             ${yes_to_all_flag} \
                             ${fresh_flag} \
+                            ${local_flag} \
                             ${dryrun_flag} \
+                            ${codecov_flag} \
                             ${gcc_bootstrap_flag} \
                             ${fortran_flag} \
                             ${mpiexec_flag} \
@@ -696,7 +750,9 @@ done
 
 echo >&2 ""
 echo >&2 "-- ParaMonte - all build files are stored at ${ParaMonte_ROOT_DIR}/build/"
+if [ "${codecov_flag}" = "" ]; then
 echo >&2 "-- ParaMonte - the library files are ready to use at ${ParaMonte_ROOT_DIR}/bin/"
+fi
 echo >&2 ""
 echo >&2 "-- ParaMonte - mission accomplished."
 echo >&2 ""

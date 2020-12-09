@@ -5,6 +5,20 @@ To access the latest release of the package, visit [the ParaMonte GitHub reposit
 
 ## **Version 2.x.x**  
 
+### Version  2.x.x -- Work in progress
+
+**Minor enhancements**  
+
++   The interactive mode for displaying plots is now automatically on. 
+    The plots are not automatically displayed in `ipython` sessions.  
+
+### Version  2.3.1 -- November 15, 2020  
+
+**Minor enhancements**  
+
++   Minor enhancements to the Kernel library 
+    build scripts and dependencies management.
+
 ### Version  2.3.0 -- October 29, 2020  
 
 **Enhancements**  

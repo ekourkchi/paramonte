@@ -78,7 +78,7 @@ set "INSTALL_SCRIPT_NAME=ParaMonte install.bat"
 
 REM type .\bmake\install_usage.txt
 
-set FPP_FLAGS_EXTRA=
+set FPP_FLAGS_USER=
 set LANG_LIST=
 set BTYPE_LIST=
 set LTYPE_LIST=
@@ -87,7 +87,11 @@ set PARALLELISM_LIST=
 set FOR_COARRAY_NUM_IMAGES=
 set ParaMonte_INSTALL_CLEANUP_ENABLED=true
 set DRY_RUN=false
+set "LIB_ENABLED="
+set TEST_ENABLED=true
+set EXAM_ENABLED=true
 set FAST_ENABLED=false
+set CODECOV_ENALBED=false
 set FPP_ONLY_ENABLED=false
 set MatDRAM_ENABLED=false
 
@@ -191,6 +195,18 @@ if not "%1"=="" (
         shift
     )
 
+    REM --lib_enabled
+
+    if "!FLAG!"=="--lib_enabled" (
+        set FLAG_SUPPORTED=true
+        set "LIB_ENABLED=!VALUE!"
+        set VALUE_SUPPORTED=false
+        if !LIB_ENABLED!==true set "VALUE_SUPPORTED=true"
+        if !LIB_ENABLED!==false set "VALUE_SUPPORTED=true"
+        if not !VALUE_SUPPORTED!==true goto LABEL_REPORT_ERR
+        shift
+    )
+
     REM --test_enabled
 
     if "!FLAG!"=="--test_enabled" (
@@ -252,16 +268,11 @@ if not "%1"=="" (
 
     if "!FLAG!"=="--fpp" (
         set FLAG_SUPPORTED=true
-        set FPP_ONLY_ENABLED_TEMP=false
         set FPP_MACRO=%2
-        if "!FPP_MACRO!"=="/P" set FPP_ONLY_ENABLED_TEMP=true
-        if "!FPP_MACRO!"=="/preprocess-only" set FPP_ONLY_ENABLED_TEMP=true
-        if "!FPP_MACRO!"=="only" set FPP_ONLY_ENABLED_TEMP=true
-        if !FPP_ONLY_ENABLED_TEMP!==true (
-            set FPP_ONLY_ENABLED=true
-        ) else (
-            set "FPP_FLAGS_EXTRA=!FPP_FLAGS_EXTRA! !FPP_MACRO!"
-        )
+        if "!FPP_MACRO!"=="only" set FPP_MACRO=/preprocess-only
+        if "!FPP_MACRO!"=="/P" set FPP_ONLY_ENABLED=true
+        if "!FPP_MACRO!"=="/preprocess-only" set FPP_ONLY_ENABLED=true
+        set "FPP_FLAGS_USER=!FPP_FLAGS_USER! !FPP_MACRO!"
         shift
     )
 
@@ -277,6 +288,13 @@ if not "%1"=="" (
     if "!FLAG!"=="--fast" (
         set FLAG_SUPPORTED=true
         set FAST_ENABLED=true
+    )
+
+    REM --codecov
+
+    if "!FLAG!"=="--codecov" (
+        set FLAG_SUPPORTED=true
+        set CODECOV_ENALBED=true
     )
 
     REM --help
@@ -409,11 +427,17 @@ echo.
 
 :: set build type
 
-if not defined LANG_LIST        set LANG_LIST=c/c++/fortran/matlab/python/r
-if not defined BTYPE_LIST       set BTYPE_LIST=release/testing/debug
-if not defined LTYPE_LIST       set LTYPE_LIST=static/dynamic
-if not defined MEMORY_LIST      set MEMORY_LIST=stack/heap
-if not defined PARALLELISM_LIST set PARALLELISM_LIST=none/mpi/cafsingle/cafshared
+REM if not defined LANG_LIST        set LANG_LIST=c/c++/fortran/matlab/python/r
+REM if not defined BTYPE_LIST       set BTYPE_LIST=release/testing/debug
+REM if not defined LTYPE_LIST       set LTYPE_LIST=static/dynamic
+REM if not defined MEMORY_LIST      set MEMORY_LIST=stack/heap
+REM if not defined PARALLELISM_LIST set PARALLELISM_LIST=none/mpi/cafsingle/cafshared
+
+if not defined LANG_LIST        set LANG_LIST=c/c++/fortran/matlab/python
+if not defined BTYPE_LIST       set BTYPE_LIST=release/debug
+if not defined LTYPE_LIST       set LTYPE_LIST=dynamic
+if not defined MEMORY_LIST      set MEMORY_LIST=heap
+if not defined PARALLELISM_LIST set PARALLELISM_LIST=none/mpi
 
 REM remove redundancies
 
@@ -495,12 +519,14 @@ if !DRY_RUN!==true (
 ) else (
     set FRESH_RUN=true
 )
+if not defined LIB_ENABLED set LIB_ENABLED=!FRESH_RUN!
 
 echo. LANG_LIST=!LANG_LIST!
 echo. BTYPE_LIST=!BTYPE_LIST!
 echo. LTYPE_LIST=!LTYPE_LIST!
 echo. MEMORY_LIST=!MEMORY_LIST!
 echo. PARALLELISM_LIST=!PARALLELISM_LIST!
+echo. FPP_ONLY_ENABLED=!FPP_ONLY_ENABLED!
 
 for %%G in ("!LANG_LIST:/=" "!") do (
 
@@ -514,8 +540,8 @@ for %%G in ("!LANG_LIST:/=" "!") do (
 
                     set BENABLED=true
 
-                    set ParaMonte_OBJ_ENABLED=!FRESH_RUN!
-                    set ParaMonte_LIB_ENABLED=!FRESH_RUN!
+                    set ParaMonte_OBJ_ENABLED=!LIB_ENABLED!
+                    set ParaMonte_LIB_ENABLED=!LIB_ENABLED!
                     set ParaMonteExample_EXE_ENABLED=!EXAM_ENABLED!
                     set ParaMonteExample_RUN_ENABLED=!EXAM_ENABLED!
 

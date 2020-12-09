@@ -33,6 +33,7 @@
 
 *.pyc
 **/__pycache__/*
+**/codecov/*
 
 #########################
 # Packages              #
@@ -117,6 +118,8 @@ Thumbs.db
 # ParaMonte temp folders
 #########################
 
+**/src/kernel/ParaMonte_mod@version@kernel.inc.f90
+**/codecov
 **/.ipynb_checkpoints/*
 **/benchmark/*
 **/build/*
@@ -197,3 +200,4 @@ _deps
 
 *.R
 *.r.*
+.Rproj.user
