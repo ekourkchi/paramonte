@@ -35,7 +35,7 @@
 %%%%   work (education/research/industry/development/...) by citing the ParaMonte 
 %%%%   library as described on this page:
 %%%%
-%%%%       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+%%%%       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,6 +206,12 @@ classdef paramonte %< dynamicprops
         %               isMacOS : true if the operating system is macOS (Darwin)
         %
         platform = struct();
+        %
+        % This is simply an alias for the ParaDRAM class.
+        Paradram        = [];
+        %
+        % This is simply an alias for the ParaDRAM class.
+        paradram        = [];
     end
 
     properties(Access = protected, Hidden)
@@ -357,11 +363,11 @@ classdef paramonte %< dynamicprops
             self.website.github.release.latest.url = self.website.github.release.url + "/latest";
             self.website.github.archive = struct();
             self_website_github_archive_url = self.website.github.url + "/archive";
-            self.website.github.archive.master = struct();
-            self.website.github.archive.master.zip = struct();
-            self.website.github.archive.master.tar = struct();
-            self.website.github.archive.master.zip.url = self_website_github_archive_url + "/master.zip";
-            self.website.github.archive.master.tar.url = self_website_github_archive_url + "/master.tar.gz";
+            self.website.github.archive.main = struct();
+            self.website.github.archive.main.zip = struct();
+            self.website.github.archive.main.tar = struct();
+            self.website.github.archive.main.zip.url = self_website_github_archive_url + "/main.zip";
+            self.website.github.archive.main.tar.url = self_website_github_archive_url + "/main.tar.gz";
 
             %%%% GitHub examples
 
@@ -472,7 +478,7 @@ classdef paramonte %< dynamicprops
                 self.Err.abort()
             end
 
-            % set ParaDRAM sampler
+            %%%% Set ParaDRAM sampler
 
             if self.matdramKernelEnabled
                 self.ParaDRAM = ParaDRAM_class(self.platform,self.website,self.version.interface.dump);
@@ -480,7 +486,13 @@ classdef paramonte %< dynamicprops
                 self.ParaDRAM = ParaDRAM(self.platform,self.website);
             end
 
-            % verify prereqs
+            % Set the ParaDRAM aliases. These are solely generated for the convenience of the users in accessing the ParaDRAM() class.
+            % These are hidden components and the user does not have access to them, however, if mistakenly typed, they won't be disappointed.
+
+            self.Paradram = self.ParaDRAM;
+            self.paradram = self.ParaDRAM;
+
+            %%%% verify prereqs
 
             self.verify("reset",false);
 
@@ -758,7 +770,7 @@ classdef paramonte %< dynamicprops
         function checkForUpdate(self)
 
             currentVersionString = self.version.interface.dump();
-            versionFileLineList = strsplit(webread("https://raw.githubusercontent.com/cdslaborg/paramonte/master/src/interface/MATLAB/.VERSION"), newline);
+            versionFileLineList = strsplit(webread("https://raw.githubusercontent.com/cdslaborg/paramonte/main/src/interface/MATLAB/.VERSION"), newline);
             latestVersionString = string(versionFileLineList{1});
 
             self.Err.prefix = self.names.paramonte;
@@ -1043,9 +1055,9 @@ classdef paramonte %< dynamicprops
                         self.buildParaMontePrereqsForMac();
                     end
 
-                    pmGitTarPath = fullfile( self.path.lib, "master.tar.gz" );
-                    pmGitTarPath = websave(pmGitTarPath,"https://github.com/cdslaborg/paramonte/archive/master.tar.gz");
-                    pmGitRootDir = fullfile(self.path.lib, "paramonte-master");
+                    pmGitTarPath = fullfile( self.path.lib, "main.tar.gz" );
+                    pmGitTarPath = websave(pmGitTarPath,"https://github.com/cdslaborg/paramonte/archive/main.tar.gz");
+                    pmGitRootDir = fullfile(self.path.lib, "paramonte-main");
 
                     try
                         untar(pmGitTarPath,self.path.lib);
@@ -1310,7 +1322,7 @@ classdef paramonte %< dynamicprops
             localInstallDir.caf.bin = [];
             localInstallDir.caf.lib = [];
 
-            pmGitRootDir = fullfile( self.path.lib , "paramonte-master" );
+            pmGitRootDir = fullfile( self.path.lib , "paramonte-main" );
 
             if isfolder(pmGitRootDir)
 

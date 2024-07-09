@@ -35,7 +35,7 @@
 ::::   work (education/research/industry/development/...) by citing the ParaMonte 
 ::::   library as described on this page:
 ::::
-::::       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+::::       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 ::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -236,9 +236,9 @@ if !TARGET_LANG!==Fortran (
     set LINKER_FLAGS=/link /out:!EXE_NAME!
     set SRC_FILES=paramonte.!SEXT! !SRC_FILES!
 
-    REM if !PTYPE!==mpi (
-    REM     set COMPILER_NAME=mpiifort -fc=ifort
-    REM )
+    if !PTYPE!==mpi (
+        if !LTYPE!==static set COMPILER_NAME=mpiifort -fc=ifort
+    )
 
     set COMPILER_FLAGS=/fpp
     REM set COMPILER_FLAGS=/fpp /DIS_COMPATIBLE_COMPILER

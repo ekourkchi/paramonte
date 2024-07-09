@@ -35,7 +35,7 @@
 ####   work (education/research/industry/development/...) by citing the ParaMonte 
 ####   library as described on this page:
 ####
-####       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+####       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 ####
 ####################################################################################################################################
 ####################################################################################################################################
@@ -45,9 +45,9 @@
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 set(COMPILER_IS_PREDEFINED FALSE)
-if (DEFINED FC)
-    set (CMAKE_Fortran_COMPILER "${FC}")
+if (DEFINED CMAKE_Fortran_COMPILER)
     set (COMPILER_IS_PREDEFINED TRUE)
+    message ( STATUS "${pmnote} Setting the compiler choice to the user-requested compiler path: ${CMAKE_Fortran_COMPILER}" )
 endif()
 
 # if (DEFINED MPI_Fortran_COMPILER)

@@ -35,7 +35,7 @@
 !!!!   work (education/research/industry/development/...) by citing the ParaMonte
 !!!!   library as described on this page:
 !!!!
-!!!!       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+!!!!       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 !!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -46,7 +46,7 @@
 !> \remark
 !> This module requires preprocessing, prior to compilation.
 !>
-!> @author Amir Shahmoradi
+!> \author Amir Shahmoradi
 
     use Constants_mod, only: IK, RK
     use Err_mod, only: Err_type
@@ -66,10 +66,10 @@
     type, abstract :: ProposalAbstract_type
     contains
         procedure(getNew_proc)                  , nopass    , deferred  :: getNew
+#if defined PARADISE
         procedure(getLogProb_proc)              , nopass    , deferred  :: getLogProb
+#endif
         procedure(doAdaptation_proc)            , nopass    , deferred  :: doAdaptation
-       !procedure(readRestartFileAscii_proc)    , nopass    , deferred  :: readRestartFileAscii
-       !procedure(writeRestartFileAscii_proc)   , nopass    , deferred  :: writeRestartFileAscii
 #if defined CAF_ENABLED || defined MPI_ENABLED
         procedure(bcastAdaptation_proc)         , nopass    , deferred  :: bcastAdaptation
 #endif

@@ -35,7 +35,7 @@
 ::::   work (education/research/industry/development/...) by citing the ParaMonte 
 ::::   library as described on this page:
 ::::
-::::       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+::::       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 ::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -295,7 +295,7 @@ echo.
 :: if !ParaMonteTest_RUN_ENABLED! NEQ true goto LABEL_EXAMPLE_ENABLED
 if !ParaMonteTest_RUN_ENABLED! NEQ true (
     echo.
-    echo. -- ParaMonteTest - Warning: skipping ParaMonte library test run...
+    echo. -- ParaMonteTest - NOTE: skipping ParaMonte library test run...
     echo.
     goto :eof
 )

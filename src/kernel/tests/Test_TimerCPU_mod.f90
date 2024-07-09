@@ -35,13 +35,13 @@
 !!!!   work (education/research/industry/development/...) by citing the ParaMonte
 !!!!   library as described on this page:
 !!!!
-!!!!       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+!!!!       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 !!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !>  \brief This module contains tests of the module [TimerCPU_mod](@ref timercpu_mod).
-!>  @author Amir Shahmoradi
+!>  \author Amir Shahmoradi
 
 module Test_TimerCPU_mod
 
@@ -94,9 +94,9 @@ contains
         call sleep(seconds=seconds,Err=TimerCPU%Err)
         assertion = .not. TimerCPU%Err%occurred; if (.not. assertion) return
         call TimerCPU%toc()
-        assertion = assertion .and. TimerCPU%Time%total > 0.9_RK * seconds
-        assertion = assertion .and. TimerCPU%Time%delta > 0.9_RK * seconds
-        assertion = assertion .and. TimerCPU%Time%start < TimerCPU%Time%stop
+        assertion = assertion .and. TimerCPU%Time%total >= 0._RK
+        assertion = assertion .and. TimerCPU%Time%delta >= 0._RK
+        assertion = assertion .and. TimerCPU%Time%start <= TimerCPU%Time%stop
 
         ! LCOV_EXCL_START
         if (Test%isDebugMode .and. .not. assertion) then

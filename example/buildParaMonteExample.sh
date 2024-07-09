@@ -36,7 +36,7 @@
 ####   work (education/research/industry/development/...) by citing the ParaMonte
 ####   library as described on this page:
 ####
-####       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+####       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 ####
 ####################################################################################################################################
 ####################################################################################################################################
@@ -62,7 +62,7 @@ echo >&2
 BUILD_NAME="buildParaMonteExample"
 verify() {
     if [ $1 -eq 0 ]; then
-        echo >&2 "-- ${BUILD_NAME} - ParaMonte $2 appears to have succeeded."
+        echo >&2 "-- ${pmattn} ${BoldGreen}The ParaMonte library $2 appears to have succeeded.${ColorReset}"
     else
         echo >&2
         echo >&2 "    -- ${BUILD_NAME} - FATAL: ParaMonte $2 appears to have failed."
@@ -230,24 +230,32 @@ do
 
         #### GNU
 
-        if [ "${PMCS}" = "gnu" ] && ! [ "${isMacOS}" = "true" ] && ! [ "${CAF_ENABLED}" = "true" ]; then # caf does not have lib dependency
+        if [ "${PMCS}" = "gnu" ] && ! [ "${CAF_ENABLED}" = "true" ]; then # caf does not have lib dependency  && ! [ "${isMacOS}" = "true" ]
 
             #### copy Fortran compiler shared library files
 
             if ! [ -z ${Fortran_COMPILER_PATH+x} ]; then
-                Fortran_COMPILER_DIR=$(dirname "${Fortran_COMPILER_PATH}")
-                FortranCompilerVersion=$("${Fortran_COMPILER_PATH}" -dumpversion)
-                FortranCompilerMajorVersion="$(cut -d '.' -f 1 <<< "$FortranCompilerVersion")"
-                Fortran_COMPILER_ROOT_DIR="${Fortran_COMPILER_DIR}"/..
-                #copySucceeded=false
-                FILE_LIST="libgfortran.so:libquadmath.so"
-                Fortran_COMPILER_LIB_DIR_LIST="${Fortran_COMPILER_ROOT_DIR}/lib64:/usr/lib/gcc/x86_64-linux-gnu/${FortranCompilerMajorVersion}"
+
+                if [ "${isMacOS}" = "true" ]; then
+                    Fortran_COMPILER_LIB_DIR_LIST="/usr/local/gfortran/lib"
+                    sharedLibExt="dylib"
+                else
+                    sharedLibExt="so"
+                    Fortran_COMPILER_DIR=$(dirname "${Fortran_COMPILER_PATH}")
+                    FortranCompilerVersion=$("${Fortran_COMPILER_PATH}" -dumpversion)
+                    FortranCompilerMajorVersion="$(cut -d '.' -f 1 <<< "$FortranCompilerVersion")"
+                    Fortran_COMPILER_ROOT_DIR="${Fortran_COMPILER_DIR}"/..
+                    #copySucceeded=false
+                    Fortran_COMPILER_LIB_DIR_LIST="${Fortran_COMPILER_ROOT_DIR}/lib64:/usr/lib/gcc/x86_64-linux-gnu/${FortranCompilerMajorVersion}"
+                fi
+                FILE_LIST="libgfortran:libquadmath"
+
                 for FILE in ${FILE_LIST//:/ }
                 do
                     for Fortran_COMPILER_LIB_DIR in ${Fortran_COMPILER_LIB_DIR_LIST//:/ }
                     do
                         if [ -d "${Fortran_COMPILER_LIB_DIR}" ]; then
-                            flist=$(( IFS=:; unset lsout; lsout=$(ls -dm "${Fortran_COMPILER_LIB_DIR}/${FILE}"*); if ! [[ -z "${lsout// }" ]]; then echo "${lsout}, "; fi) 2>/dev/null)
+                            flist=$(( IFS=:; unset lsout; lsout=$(ls -dm "${Fortran_COMPILER_LIB_DIR}/${FILE}"*.${sharedLibExt}*); if ! [[ -z "${lsout// }" ]]; then echo "${lsout}, "; fi) 2>/dev/null)
                             for fpath in $(echo $flist | sed "s/,/ /g"); do
                                 echo >&2
                                 echo >&2 "-- ParaMonteExample${LANG_NAME} - copying the ParaMonte library dll dependency file..."
@@ -282,9 +290,13 @@ do
                 echo >&2
             fi
 
-            #### copy MPI shared library files
+            #### copy MPI shared library files. UPDATE: Not a good idea to copy MPI installation files. It only creates a mess in the binary folders and rarely works.
 
-            if ! [ -z ${MPIEXEC_PATH+x} ] && [ "${MPI_ENABLED}" = "true" ]; then
+            if [ "false" = "true" ] && ! [ -z ${MPIEXEC_PATH+x} ] && ! [ "${MPILIB_NAME}" = "openmpi" ] && [ "${MPI_ENABLED}" = "true" ]; then
+
+                # copy files only if it is not openMPI. OpenMPI files interfer for local installations of the library on the user system. Example:
+                # mpiexec: Error: unknown option "-np"
+                # mpiexec: Error: unknown option "--oversubscribe"
 
                 #echo >&2
                 #echo >&2 "-- ParaMonteExample${LANG_NAME} - copying the the mpiexec executable file..."
@@ -543,17 +555,17 @@ if ! [ -d "${ParaMonteExample_BIN_DIR_CURRENT}" ]; then
     verify $? "recursive directory creation"
 fi
 
-echo >&2 "-- ParaMonteExample${LANG_NAME} - The ParaMonte ${LANG_NAME} library binary directory: ${ParaMonteExample_BIN_DIR_CURRENT}"
+echo >&2 "-- ParaMonteExample${LANG_NAME} - The ParaMonte ${LANG_NAME} library install directory: ${ParaMonteExample_BIN_DIR_CURRENT}"
 
 if [ -d "${ParaMonteExample_BIN_DIR_CURRENT}" ]; then
-    echo >&2 "-- ParaMonteExample${LANG_NAME} - ParaMonte binary/library directory already exists. skipping..."
+    echo >&2 "-- ParaMonteExample${LANG_NAME} - The ParaMonte install directory already exists. skipping..."
 else
-    echo >&2 "-- ParaMonteExample${LANG_NAME} - generating ParaMonte binary/library directory..."
+    echo >&2 "-- ParaMonteExample${LANG_NAME} - generating ParaMonte install directory..."
     mkdir -p "${ParaMonteExample_BIN_DIR_CURRENT}"
     verify $? "recursive directory creation"
 fi
 
-echo >&2 "-- ParaMonteExample${LANG_NAME} - copying the ParaMonte library files to the bin folder..."
+echo >&2 "-- ParaMonteExample${LANG_NAME} - copying the ParaMonte library files to the install directory..."
 echo >&2 "-- ParaMonteExample${LANG_NAME} - from: ${ParaMonteExample_BLD_DIR_CURRENT}"
 echo >&2 "-- ParaMonteExample${LANG_NAME} -   to: ${ParaMonteExample_BIN_DIR_CURRENT}"
 cp -R "${ParaMonteExample_BLD_DIR_CURRENT}"/* "${ParaMonteExample_BIN_DIR_CURRENT}" || printCopyFailMsg

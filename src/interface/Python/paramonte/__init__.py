@@ -38,7 +38,7 @@
 ####   work (education/research/industry/development/...) by citing the ParaMonte 
 ####   library as described on this page:
 ####
-####       https://github.com/cdslaborg/paramonte/blob/master/ACKNOWLEDGMENT.md
+####       https://github.com/cdslaborg/paramonte/blob/main/ACKNOWLEDGMENT.md
 ####
 ####################################################################################################################################
 ####################################################################################################################################
@@ -165,6 +165,8 @@ import _paramonte as _pm
 
 from _pmreqs import verify, build, checkForUpdate, verifyDependencyVersion, getDependencyVersion
 from _paradram import ParaDRAM
+from _paradram import ParaDRAM as Paradram
+from _paradram import ParaDRAM as paradram
 from _paramonte import version, website, cite
 
 
@@ -244,6 +246,8 @@ __all__ =   [ "__authors__"
             , "__credits__"
             , "__version__"
             , "ParaDRAM"
+            , "Paradram"
+            , "paradram"
             , "version"
             , "verify"
             , "helpme"
